@@ -9,7 +9,7 @@ import {
 
 @Entity('profiles')
 export class Profile {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: number;
 
   @Column()
