@@ -1,26 +1,70 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from './entities/user.entity';
+import { hashPassword } from 'src/utils/hashPassword';
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(
+    @InjectRepository(User) private userRepository: Repository<User>,
+  ) {}
+
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    // Hash the password before saving the user
+    if (createUserDto.password) {
+      createUserDto.password = await hashPassword(createUserDto.password);
+    }
+    // Save the user to the database
+    return await this.userRepository
+      .save(createUserDto)
+      .then((user) => {
+        return user;
+      })
+      .catch((err) => {
+        throw new Error(`Error creating user: ${err}`);
+      });
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll() {
+    return await this.userRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number): Promise<User | string> {
+    return await this.userRepository
+      .findOneBy({ id })
+      .then((user) => {
+        if (!user) {
+          throw new Error(`User with id ${id} not found`);
+        }
+        return user;
+      })
+      .catch((err) => {
+        throw new Error(`Error finding user with id ${id}: ${err}`);
+      });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(
+    id: number,
+    updateUserDto: UpdateUserDto,
+  ): Promise<User | string> {
+    await this.userRepository.update(id, updateUserDto);
+    return this.findOne(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number) {
+    return await this.userRepository
+      .delete(id)
+      .then((res) => {
+        if (res.affected === 0) {
+          throw new Error(`User with id ${id} not found`);
+        }
+        return `User with id ${id} deleted successfully`;
+      })
+      .catch((err) => {
+        throw new Error(`Error deleting user with id ${id}: ${err}`);
+      });
   }
 }
