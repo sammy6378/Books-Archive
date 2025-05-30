@@ -1,9 +1,7 @@
 import {
-  IsDateString,
   IsEmail,
   IsEnum,
   IsNotEmpty,
-  IsNumber,
   IsString,
   IsStrongPassword,
 } from 'class-validator';
@@ -13,9 +11,6 @@ export enum status {
   INACTIVE = 'inactive',
 }
 export class CreateUserDto {
-  @IsNumber()
-  id: number;
-
   @IsString()
   @IsNotEmpty()
   name: string;
@@ -31,11 +26,5 @@ export class CreateUserDto {
   password: string;
 
   @IsEnum(status)
-  isActive: status;
-
-  @IsDateString()
-  createdAt: Date;
-
-  @IsDateString()
-  updatedAt: Date;
+  isActive: status = status.ACTIVE;
 }
