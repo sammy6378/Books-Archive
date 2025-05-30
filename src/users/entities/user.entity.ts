@@ -11,7 +11,7 @@ import { Profile } from 'src/profile/entities/profile.entity';
 
 @Entity('users')
 export class User {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: number;
 
   @Column()
