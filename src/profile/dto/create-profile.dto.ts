@@ -15,4 +15,7 @@ export class CreateProfileDto {
 
   @IsString()
   location: string;
+
+  @IsNumber()
+  userId: number;
 }
