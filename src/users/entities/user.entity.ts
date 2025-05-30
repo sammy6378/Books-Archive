@@ -23,7 +23,7 @@ export class User {
   @Column({ select: false })
   password: string;
 
-  @Column({ type: 'enum', enum: status, default: true })
+  @Column({ type: 'enum', enum: status, default: 'active' })
   isActive: status;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
