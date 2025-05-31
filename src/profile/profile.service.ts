@@ -41,7 +41,7 @@ export class ProfileService {
     return await this.profileRepository.find();
   }
 
-  async findOne(id: number): Promise<Profile | string> {
+  async findOne(id: string): Promise<Profile | string> {
     return await this.profileRepository
       .findOneBy({ id })
       .then((profile) => {
@@ -55,12 +55,12 @@ export class ProfileService {
       });
   }
 
-  async update(id: number, updateProfileDto: UpdateProfileDto) {
+  async update(id: string, updateProfileDto: UpdateProfileDto) {
     await this.profileRepository.update(id, updateProfileDto);
     return this.findOne(id);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     return await this.profileRepository
       .delete(id)
       .then((res) => {
