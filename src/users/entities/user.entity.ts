@@ -2,17 +2,19 @@ import {
   Column,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   Relation,
 } from 'typeorm';
 import { status } from '../dto/create-user.dto';
 import { Profile } from 'src/profile/entities/profile.entity';
+import { Review } from 'src/reviews/entities/review.entity';
 
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column()
   name: string;
@@ -44,4 +46,10 @@ export class User {
   })
   @JoinColumn()
   profile: Relation<Profile>;
+
+  @OneToMany(() => Review, (review) => review.user, {
+    eager: true,
+    onDelete: 'CASCADE',
+  })
+  reviews: Relation<Review[]>;
 }
