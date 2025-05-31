@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  ParseIntPipe,
 } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
@@ -27,17 +26,17 @@ export class ReviewsController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id') id: string) {
     return this.reviewsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: number, @Body() updateReviewDto: UpdateReviewDto) {
-    return this.reviewsService.update(+id, updateReviewDto);
+  update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto) {
+    return this.reviewsService.update(id, updateReviewDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.reviewsService.remove(+id);
+    return this.reviewsService.remove(id);
   }
 }
