@@ -10,7 +10,7 @@ import {
 @Entity('profiles')
 export class Profile {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column()
   bio?: string;
