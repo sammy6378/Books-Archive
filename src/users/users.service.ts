@@ -32,7 +32,7 @@ export class UsersService {
     return await this.userRepository.find();
   }
 
-  async findOne(id: number): Promise<User | string> {
+  async findOne(id: string): Promise<User | string> {
     return await this.userRepository
       .findOneBy({ id })
       .then((user) => {
@@ -47,7 +47,7 @@ export class UsersService {
   }
 
   async update(
-    id: number,
+    id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<User | string> {
     await this.userRepository.update(id, updateUserDto);
