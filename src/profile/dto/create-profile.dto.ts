@@ -1,9 +1,6 @@
 import { IsDateString, IsNumber, IsString, IsUrl } from 'class-validator';
 
 export class CreateProfileDto {
-  @IsNumber()
-  id: number;
-
   @IsString()
   bio: string;
 
@@ -17,5 +14,5 @@ export class CreateProfileDto {
   location: string;
 
   @IsNumber()
-  userId: number;
+  userId: string;
 }
