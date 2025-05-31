@@ -7,7 +7,7 @@ import {
   Relation,
 } from 'typeorm';
 
-@Entity()
+@Entity('reviews')
 export class Review {
   @PrimaryGeneratedColumn('uuid')
   id: string;
