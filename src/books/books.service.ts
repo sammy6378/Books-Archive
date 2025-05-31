@@ -1,26 +1,79 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Book } from './entities/book.entity';
+import { Repository } from 'typeorm';
+import { Author } from 'src/authors/entities/author.entity';
 
 @Injectable()
 export class BooksService {
-  create(createBookDto: CreateBookDto) {
-    return 'This action adds a new book';
+  constructor(
+    @InjectRepository(Book)
+    private bookRepository: Repository<Book>,
+
+    @InjectRepository(Author)
+    private authorRepository: Repository<Author>,
+  ) {}
+
+  async create(createBookDto: CreateBookDto): Promise<Book> {
+    const author = await this.authorRepository.findOneBy({
+      id: createBookDto.authorId,
+    });
+    if (!author) {
+      throw new NotFoundException(
+        `Author with id ${createBookDto.authorId} not found`,
+      );
+    }
+
+    const book = this.bookRepository.create({
+      ...createBookDto,
+      author,
+    });
+
+    return await this.bookRepository.save(book);
   }
 
-  findAll() {
-    return `This action returns all books`;
+  async findAll(): Promise<Book[]> {
+    return await this.bookRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} book`;
+  async findOne(id: string): Promise<Book> {
+    const book = await this.bookRepository.findOneBy({ id });
+    if (!book) {
+      throw new NotFoundException(`Book with id ${id} not found`);
+    }
+    return book;
   }
 
-  update(id: number, updateBookDto: UpdateBookDto) {
-    return `This action updates a #${id} book`;
+  async update(id: string, updateBookDto: UpdateBookDto): Promise<Book> {
+    const book = await this.bookRepository.findOneBy({ id });
+    if (!book) {
+      throw new NotFoundException(`Book with id ${id} not found`);
+    }
+
+    // Handle optional author update
+    if (updateBookDto.authorId) {
+      const author = await this.authorRepository.findOneBy({
+        id: updateBookDto.authorId,
+      });
+      if (!author) {
+        throw new NotFoundException(
+          `Author with id ${updateBookDto.authorId} not found`,
+        );
+      }
+      book.author = author;
+    }
+
+    Object.assign(book, updateBookDto);
+    return await this.bookRepository.save(book);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} book`;
+  async remove(id: string): Promise<string> {
+    const result = await this.bookRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Book with id ${id} not found`);
+    }
+    return `Book with id ${id} has been deleted successfully`;
   }
 }
