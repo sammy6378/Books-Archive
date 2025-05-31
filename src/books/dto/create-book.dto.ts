@@ -17,4 +17,7 @@ export class CreateBookDto {
 
   @IsString()
   authorId: string;
+
+  @IsString({ each: true })
+  categoryNames: string[];
 }
