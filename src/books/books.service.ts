@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Book } from './entities/book.entity';
 import { Repository } from 'typeorm';
 import { Author } from 'src/authors/entities/author.entity';
+import { Category } from 'src/category/entities/category.entity';
 
 @Injectable()
 export class BooksService {
@@ -17,18 +18,39 @@ export class BooksService {
   ) {}
 
   async create(createBookDto: CreateBookDto): Promise<Book> {
-    const author = await this.authorRepository.findOneBy({
-      id: createBookDto.authorId,
+    const { title, description, publicationYear, authorId, categoryNames } =
+      createBookDto;
+
+    const author = await this.authorRepository.findOne({
+      where: { id: authorId },
     });
-    if (!author) {
-      throw new NotFoundException(
-        `Author with id ${createBookDto.authorId} not found`,
-      );
+    if (!author) throw new NotFoundException('Author not found');
+
+    const categories: Category[] = [];
+
+    for (const name of categoryNames) {
+      let category = await this.bookRepository.manager.findOne(Category, {
+        where: { name },
+      });
+
+      if (!category) {
+        // Optionally create the category if not found
+        category = this.bookRepository.manager.create(Category, {
+          name,
+          description: `${name} category`,
+        });
+        category = await this.bookRepository.manager.save(Category, category);
+      }
+
+      categories.push(category);
     }
 
     const book = this.bookRepository.create({
-      ...createBookDto,
+      title,
+      description,
+      publicationYear,
       author,
+      categories,
     });
 
     return await this.bookRepository.save(book);
