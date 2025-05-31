@@ -1,7 +1,10 @@
 import { Author } from 'src/authors/entities/author.entity';
+import { Category } from 'src/category/entities/category.entity';
 import {
   Column,
   Entity,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
   Relation,
@@ -39,4 +42,11 @@ export class Book {
     eager: true,
   })
   author: Relation<Author>;
+
+  @ManyToMany(() => Category, (category) => category.books, {
+    cascade: true,
+    eager: true,
+  })
+  @JoinTable()
+  categories: Relation<Category[]>;
 }
