@@ -1,6 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Book } from 'src/books/entities/book.entity';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Relation,
+} from 'typeorm';
 
-@Entity()
+@Entity('authors')
 export class Author {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -26,4 +33,11 @@ export class Author {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
+
+  @OneToMany(() => Book, (book) => book.author, {
+    eager: true,
+    onDelete: 'CASCADE',
+    cascade: true, // This allows cascading operations like insert, update, delete
+  })
+  book: Relation<Book[]>;
 }
