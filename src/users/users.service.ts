@@ -29,7 +29,12 @@ export class UsersService {
   }
 
   async findAll() {
-    return await this.userRepository.find();
+    return await this.userRepository.find({
+      relations: {
+        profile: true,
+      },
+      take: 100,
+    });
   }
 
   async findOne(id: string): Promise<User | string> {
@@ -54,7 +59,7 @@ export class UsersService {
     return this.findOne(id);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     return await this.userRepository
       .delete(id)
       .then((res) => {
