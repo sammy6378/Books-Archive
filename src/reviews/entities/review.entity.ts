@@ -32,10 +32,4 @@ export class Review {
     onDelete: 'CASCADE',
   })
   user: Relation<User>;
-
-  // @ManyToOne(() => Book, (book) => book.reviews, {
-  //   eager: true,
-  //   onDelete: 'CASCADE',
-  // })
-  // book: Relation<Book>;
 }
