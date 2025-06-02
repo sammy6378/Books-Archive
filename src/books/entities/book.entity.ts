@@ -39,7 +39,6 @@ export class Book {
 
   @ManyToOne(() => Author, (author) => author.book, {
     onDelete: 'CASCADE',
-    eager: true,
   })
   author: Relation<Author>;
 
